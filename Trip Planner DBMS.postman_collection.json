@@ -1,0 +1,599 @@
+{
+	"info": {
+		"_postman_id": "06d89f0f-f0ff-47a0-bd3b-f47f4537cfea",
+		"name": "Trip Planner DBMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24460014"
+	},
+	"item": [
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/Address",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "location_name",
+								"value": "'jaipur'",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "pincode",
+								"value": "560130",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "country",
+								"value": "'india'",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "house_no",
+								"value": "111",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "street_no",
+								"value": "3",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "locality",
+								"value": "'halasuru'",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "landmark",
+								"value": "'faps'",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"Address_id\": 2,\n    \"location_name\": \"jaipur\",\n    \"pincode\": \"560130\",\n    \"country\": \"India\",\n    \"house_no\": \"131\",\n    \"street_no\": \"3\",\n    \"locality\": \"halasuru\",\n    \"landmark\": \"faps\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/Address",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Address"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/Address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/Address",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Address"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/customer",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\": 1,\n    \"customer_name\": \"John\",\n    \"password\": \"Doe\",\n    \"email\": \"john.doe@example.com\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customer",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Buses",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/buses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/buses",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"buses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/buses",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicle_number\": \"ABC123\",\n    \"description\": \"Luxury bus\",\n    \"duration_mins\": 120,\n    \"seat_class\": \"Economy\",\n    \"travel_agency\": \"TravelCo\",\n    \"number_seats\": 50,\n    \"price_per_seat\": 25.0,\n    \"vehicle_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/buses",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"buses"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flights",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/flights",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/flights",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"flights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/flights",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"flight_number\": 1,\n    \"price_per_seat\": 200.0,\n    \"number_seats\": 150,\n    \"airline\": \"AirlineX\",\n    \"description\": \"Direct flight to destination\",\n    \"seat_class\": \"Economy\",\n    \"duration_mins\": 180,\n    \"vehicle_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/flights",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"flights"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/booking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/booking",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"No_of_rooms\": 2,\n    \"Total_cost\": 300.0,\n    \"Hotel_Id\": 1,\n    \"customer_id\": 1,\n    \"travel_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/booking",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cust_phone",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/cust_phone",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:5000/cust_phone",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cust_phone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/cust_phone",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phno\": \"1234567890\",\n    \"customer_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cust_phone",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cust_phone"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Travel",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/Travel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/Travel",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Travel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/Travel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"travel_id\": 1,\n    \"vehicle_id_to\": 2,\n    \"vehicle_id_from\": 1,\n    \"vehicle_quantity_from\": 3,\n    \"vehicle_quantity_to\": 2,\n    \"Total_cost\": 500.0\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/Travel",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Travel"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hotels",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/Hotels",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/Hotels",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Hotels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/Hotels",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Hotel_id\": 1,\n    \"room_id\": 201,\n    \"hotel_name\": \"Business Hotel\",\n    \"check_in_date\": \"2023-02-01\",\n    \"check_out_date\": \"2023-02-10\",\n    \"room_capacity\": 4,\n    \"room_class\": \"Executive Suite\",\n    \"cost_per_night\": 250.0,\n    \"Address_id\": 2\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/Hotels",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"Hotels"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicle",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/vehicle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/vehicle",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/vehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicle_id\": 2,\n    \"arriving_date\": \"2023-02-01\",\n    \"vehicle_type\": \"Bus\",\n    \"leaving_date\": \"2023-02-10\",\n    \"start_address_id\": 2,\n    \"dest_address_id\": 1,\n    \"Address_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/vehicle",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
