@@ -519,19 +519,19 @@ def view_bookings():
 
 def view_travels():
     st.title("Travles")
-    url = URL + "/travel"
+    url = URL + "/Travel"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for travels in data["travels"]:
+        for Travel in data["travel_records"]:
             table_data.append({
-                "Travel ID": travel["travel_id"],
-                "Vehicle ID to":travel["vehicle_id_to"],
-                "Vehicle ID from":travel["vehicle_id_from"],
-                "Vehicle Quantity to":travel["vehicle_quantity_to"],
-                "Vehicle Quantity from":travel["vehicle_quantity_from"],
-                "Total Cost":travel["Total_cost"]
+                "Travel ID": Travel["travel_id"],
+                "Vehicle ID to":Travel["vehicle_id_to"],
+                "Vehicle ID from":Travel["vehicle_id_from"],
+                "Vehicle Quantity to":Travel["vehicle_quantity_to"],
+                "Vehicle Quantity from":Travel["vehicle_quantity_from"],
+                "Total Cost":Travel["Total_cost"]
             })
         df = pd.DataFrame(table_data)
         st.table(df)
@@ -539,6 +539,145 @@ def view_travels():
         st.error("Error retrieving data.")
 
 
+
+def view_vehicles():
+    st.title("Vehicles")
+    url = URL + "/vehicle"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for vehicle in data["vehicles"]:
+            table_data.append({
+                "Vehicle ID": vehicle["vehicle_id"],
+                "Arriving date":vehicle["arriving_date"],
+                "Vehicle type":vehicle["vehicle_type"],
+                "Leaving date":vehicle["leaving_date"],
+                "Dest address ID":vehicle["dest_address_id"],
+                "Address ID":vehicle["Address_id"]
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
+
+
+def view_customer():
+    st.title("Customers")
+    url = URL + "/customer"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for customer in data["customers"]:
+            table_data.append({
+                "Customer ID": customer["customer_id"],
+                "Customer name":customer["customer_name"],
+                "Password":customer["password"],
+                "Email":customer["email"]
+                
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
+
+def view_address():
+    st.title("Addresses")
+    url = URL + "/Address"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for Address in data["Addresses"]:
+            table_data.append({
+                "Address ID": Address["Address_id"],
+                "Location name":Address["location_name"],
+                "Pincode":Address["pincode"],
+                "Country":Address["country"],
+                "House no":Address["house_no"],
+                "Street no":Address["street_no"],
+                "Locality":Address["locality"],
+                "Landmark":Address["landmark"]
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
+
+
+def view_hotels():
+    st.title("Hotels")
+    url = URL + "/Hotels"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for hotels in data["hotels"]:
+            table_data.append({
+                "Hotel ID": hotels["Hotel_id"],
+                "Room ID":hotels["room_id"],
+                "Hotel Name": hotels["hotel_name"],
+                "Check in date": hotels["check_in_date"],
+                "Check out date": hotels["check_out_date"],
+                "Room capacity": hotels["room_capacity"],
+                "Room class": hotels["room_class"],
+                "Cost per night": hotels["cost_per_night"],
+                "Address ID": hotels["Address_id"]
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
+
+
+def view_buses():
+    st.title("Buses")
+    url = URL + "/buses"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for buses in data["buses"]:
+            table_data.append({
+                "Vehicle number": buses["vehicle_number"],
+                "Description":buses["description"],
+                "Duration mins": buses["duration_mins"],
+                "Seat class": buses["seat_class"],
+                "Travel agency": buses["travel_agency"],
+                "Number seats": buses["number_seats"],
+                "Price per seat": buses["price_per_seat"],
+                "Vehicle ID": buses["vehicle_id"]
+                
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
+ 
+def view_flights():
+    st.title("Flights")
+    url = URL + "/flights"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for flights in data["flights"]:
+            table_data.append({
+                "Flight number": flights["flight_number"],
+                "Price per seat":flights["price_per_seat"],
+                "Number seats": flights["number_seats"],
+                "Airline": flights["airline"],
+                "Description": flights["description"],
+                "Seat class": flights["seat_class"],
+                "Duartion mins": flights["duration_mins"],
+                "Vehicle ID": flights["vehicle_id"]
+                
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
+    else:
+        st.error("Error retrieving data.")
 # Sidebar menu
 menu = [
     "View Bookings",
@@ -566,13 +705,20 @@ if page == "View Bookings":
     view_bookings()
 elif page == "View Travels":
     view_travels()
-# elif page == "View Vehicles":
-# elif page == "View Customer":
-# elif page == "View Address":
-# elif page == "View Hotels":
-# elif page == "View Buses":
-# elif page == "View Flights":
-# elif page == "Add Bookings":
+elif page == "View Vehicles":
+    view_vehicles()
+elif page == "View Customer":
+    view_customer()
+elif page == "View Address":
+    view_address()
+elif page == "View Hotels":
+    view_hotels()
+elif page == "View Buses":
+    view_buses()
+elif page == "View Flights":
+    view_flights()
+#elif page == "Add Bookings":
+    #form_bookings()
 # elif page == "Add Travels":
 # elif page == "Add Vehicles":
 # elif page == "Add Customer":
