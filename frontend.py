@@ -7,86 +7,8 @@ st.set_page_config(layout="wide")
 
 URL = "http://127.0.0.1:5000"
 
-# Helper Fetch Functions
-def get_error_lists(e_map_str):
-    e_map = json.loads(e_map_str)
-    e_list = []
-    for e in e_map['globalErrors']:
-        e_list.append(e)
-    for f in list(e_map['fieldErrors'].keys()):
-        for e in e_map['fieldErrors'][f]:
-            e_list.append(e)
-    for e in e_list:
-        st.error(e)
 
 
-def fetch_branch_location_ids():
-    url = URL + "/branchLocation"
-    response = requests.get(url)
-    if response.status_code == 200:
-        locations = response.json()["branchLocations"]
-        return {location["id"]: location["name"] + ", " + location["company"]["name"] for location in locations}
-    else:
-        st.error(f"Failed to fetch branch locations. Status code: {response.status_code}")
-        return []
-
-def fetch_item_ids():
-    url = URL + "/item"
-    response = requests.get(url)
-    if response.status_code == 200:
-        items = response.json()["items"]
-        return {item["id"]: item["name"] + ", " + item["batchNumber"] for item in items}
-    else:
-        st.error(f"Failed to fetch items. Status code: {response.status_code}")
-        return []
-
-def fetch_company_ids():
-    url = URL + "/company"
-    response = requests.get(url)
-    if response.status_code == 200:
-        companies = response.json()["companies"]
-        return {company["id"]: company["name"] for company in companies}
-    else:
-        st.error(f"Failed to fetch company data. Status code: {response.status_code}")
-        return []
-
-def fetch_address_ids():
-    url = URL + "/address"
-    response = requests.get(url)
-    if response.status_code == 200:
-        addresses = response.json()["addresses"]
-        return {address["addrId"]: address["addressLine1"] + ", " + str(address["addressLine2"]) + ", " + address["city"] + ", " + address["state"] + ", " + address["country"] + " - " + address["pincode"] for address in addresses}
-    else:
-        st.error(f"Failed to fetch address data. Status code: {response.status_code}")
-        return []
-    
-def fetch_unit_codes():
-    url = URL + "/unit"
-    response = requests.get(url)
-    if response.status_code == 200:
-        units = response.json()["units"]
-        return {unit["unitCode"]: unit["name"] for unit in units}
-    else:
-        st.error(f"Failed to fetch unit data. Status code: {response.status_code}")
-        return []
-
-# View Functions
-
-def fetch_table_attribute(table, attribute_list = []):
-    url = f"{URL}/{table}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        result_list = []
-        for item in data[table]:
-            if attribute_list:
-                filtered_item = {key: item.get(key) for key in attribute_list}
-                result_list.append(filtered_item)
-            else:
-                result_list.append(item)
-        return result_list
-    else:
-        return "Error retrieving data"
 
 def directly_display(table, attribute_list = []):
     st.title(f"{table.capitalize()}s")
@@ -118,7 +40,7 @@ def view_vehicles():
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for vehicle in data["vehicles"]:
+        for vehicle in data["vehicle"]:
             table_data.append({
                 "Vehicle ID": vehicle["vehicle_id"],
                 "Arriving date": vehicle["arriving_date"],
@@ -139,7 +61,7 @@ def view_customer():
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for customer in data["customers"]:
+        for customer in data["customer"]:
             table_data.append({
                 "Customer ID": customer["customer_id"],
                 "Customer name": customer["customer_name"],
@@ -159,7 +81,7 @@ def view_address():
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for Address in data["Addresses"]:
+        for Address in data["Address"]:
             table_data.append({
                 "Address ID": Address["Address_id"],
                 "Location name": Address["location_name"],
@@ -182,7 +104,7 @@ def view_hotels():
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for hotels in data["hotels"]:
+        for hotels in data["Hotels"]:
             table_data.append({
                 "Hotel ID": hotels["Hotel_id"],
                 "Room ID": hotels["room_id"],
@@ -308,39 +230,128 @@ def form_item():
             st.success("Data submitted successfully!")
         else:
             get_error_lists(response.text)
-    
-def form_address():
-    st.title("Address Form")
 
-    address_line_1 = st.text_input("Address Line 1", "")
-    address_line_2 = st.text_input("Address Line 2", "")
-    city = st.text_input("City", "")
-    state = st.text_input("State", "")
-    country = st.text_input("Country", "")
-    pincode = st.text_input("Pincode", "")
+def fetch_table_attribute(table, attribute_list = []):
+    url = f"{URL}/{table}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        result_list = []
+        for item in data[table]:
+            if attribute_list:
+                filtered_item = {key: item.get(key) for key in attribute_list}
+                result_list.append(filtered_item)
+            else:
+                result_list.append(item)
+        return result_list
+    else:
+        return "Error retrieving data"
 
-    if st.button("Submit"):
-        data = {
-            "addressLine1": address_line_1,
-            "addressLine2": address_line_2,
-            "city": city,
-            "state": state,
-            "country": country,
-            "pincode": pincode
+def add_customer():
+    st.title("Register Customer")
+
+    customer_name = st.text_input("Full Name")
+    customer_phone_no = st.text_input("Phone Number")
+    customer_email = st.text_input("Email ID")
+    customer_password = st.text_input("Password")
+    if st.button("Register"):
+        customer_data = {
+            "customer_id": 5,
+            "customer_name": customer_name,
+            "password": customer_password,
+            "email": customer_email,
         }
-        st.table(data)
-        response = requests.post(URL + '/address', json=data)
-        if response.status_code == 200:
-            st.success('Data submitted successfully!')
+        customer_phone_data = {
+            "phno": customer_phone_no,
+            "customer_id": 5
+        }
+        response1 = requests.post(URL + '/customer', json=customer_data)
+        response2 = requests.post(URL + '/cust_phone', json = customer_phone_data)
+        if response1.status_code == 201:
+            st.success('Data1 submitted successfully!')
+        if response2.status_code == 201:
+            st.success('Data2 submitted successfully!')
         else:
-            get_error_lists(response.text)
+            st.error(f"Unable to Register")
 
+def book_trip():
+    address_data = fetch_table_attribute("Address")
+    bus_data = fetch_table_attribute("buses")
+    st.write("Buses")
+    st.table(bus_data)
+    flight_data = fetch_table_attribute("flights")
+    st.write("Flights")
+    st.table(flight_data)
+    vehicle_data = fetch_table_attribute("vehicle")
+    customer_data = fetch_table_attribute("customer")
+    st.table(customer_data)
+    st.write("Hotels")
+    hotel_data = fetch_table_attribute("Hotels")
+    st.table(hotel_data)
+
+    customer_ids = []
+    for i in customer_data:
+        customer_ids.append(i["customer_id"])
+    customer_id = st.selectbox("Customer_ID", customer_ids)
+    hotel_ids = []
+    for i in hotel_data:
+        hotel_ids.append(i["Hotel_id"])
+    hotel_id = st.selectbox("Hotel_ID", hotel_ids)
+    rooms = st.number_input("Select Number of Rooms Required")
+    bus_ids = []
+    vehicle_ids = []
+    for i in bus_data:
+        bus_ids.append(i["vehicle_id"])
+        vehicle_ids.append(i["vehicle_id"])
+    flight_ids = []
+    for i in flight_data:
+        flight_ids.append(i["vehicle_id"])
+        vehicle_ids.append(i["vehicle_id"])
+    selection1 = st.selectbox("Select Transport to Destination", vehicle_ids)
+    q1 = st.number_input("number of seats to")
+    selection2 = st.selectbox("Select Transport from Destination", vehicle_ids)
+    q2 = st.number_input("number of seats from")
+
+    if st.button("Book Trip"):
+        data1 = {
+            "travel_id": 5,
+            "vehicle_id_to": selection1,
+            "vehicle_id_from": selection2,
+            "vehicle_quantity_from": q1,
+            "vehicle_quantity_to": q2,
+            "Total_cost": 60000
+        }
+        response = requests.post(URL + "/Travel", json=data1)
+        if response.status_code == 201:
+            st.success("Data1 submitted successfully!")
+            data2 = {
+                "No_of_rooms": rooms,
+                "Total_cost": 90000,
+                "Hotel_Id": hotel_id,
+                "customer_id": customer_id,
+                "travel_id": 5
+            }
+            response2 = requests.post(URL + "/booking", json= data2)
+            if response2.status_code == 201:
+                st.success("Data2 submitted successfully!")
+            else:
+                st.error("Data 2 not submitted")
+        else:
+            st.error("Data 1 not submitted")
+    # selection1 = st.selectbox("Select Transport Type", vehicle_ids)
+    # for i in vehicle_ids:
+    #     if selection1 == i:
+    #         st.selectbox("Select Flight to destination", vehicle_ids["flights"])
+    #     else:
+    #         st.selectbox("Select Bus to destination", vehicle_ids["buses"])
+
+    # st.write(address_data, bus_data, flight_data, vehicle_data, customer_data, hotel_data)
 def form_branchLocation():
     st.title("Branch Location Form")
 
     companies = fetch_company_ids()
     company_ids = list(companies.keys())
-    
+
     addresses = fetch_address_ids()
     address_ids = list(addresses.keys())
 
@@ -361,131 +372,6 @@ def form_branchLocation():
         st.table(branch_location_data)
 
         response = requests.post(URL + "/branchLocation", json=branch_location_data)
-        if response.status_code == 200:
-            st.success("Data submitted successfully!")
-        else:
-            get_error_lists(response.text)
-
-def form_company():
-    st.title("Company Form")
-
-    addresses = fetch_address_ids()
-    address_ids = list(addresses.keys())
-
-    name = st.text_input("Company Name", "")
-    headquarter_address_id = st.selectbox("Headquarter Address ID", address_ids, format_func=lambda x: addresses[x])
-    gstin = st.text_input("GSTIN", "")
-
-    if st.button("Submit"):
-        company_data = {
-            "name": name,
-            "headquarterAddress": {
-                "addrId": headquarter_address_id
-            },
-            "gstin": gstin
-        }
-        st.table(company_data)
-
-        response = requests.post(URL + "/company", json=company_data)
-        if response.status_code == 200:
-            st.success("Data submitted successfully!")
-        else:
-            get_error_lists(response.text)
-
-def form_pi():
-    st.title("Purchase Invoice Form")
-
-    branch_locations = fetch_branch_location_ids()
-    bl_ids = list(branch_locations.keys())
-    
-    addresses = fetch_address_ids()
-    address_ids = list(addresses.keys())
-    
-    items = fetch_item_ids()
-    item_ids = list(items.keys())
-
-    invoice_date = st.date_input("Invoice Date", key="invoice_date")
-    vendor_name = st.text_input("Vendor Name", key="vendor_name")
-    branch_location_id = st.selectbox("Branch Location ID", bl_ids, format_func=lambda x: branch_locations[x], key="branch_location_id")
-    billing_address_id = st.selectbox("Billing Address ID", address_ids, format_func=lambda x: addresses[x], key="billing_address_id")
-    branch_location_to_send = {"id": branch_location_id}
-    billing_address_to_send = {"addrId": billing_address_id}
-
-    item_id = st.selectbox("Item ID", item_ids, format_func=lambda x: items[x], key="item_id")
-    quantity = st.number_input("Quantity", min_value=1, step=1, value=1, key="quantity")
-    order_items = [{"item": {"id": item_id}, "quantity": quantity}]
-
-    # Create order items    
-    # order_items = []
-    # st.header("Order Items")
-    # add_item_button = st.button("Add Item")
-    # if add_item_button:
-        # st.write(add_item_button)
-        # with st.form(f"item_form {len(order_items)}"):
-            # item_id = st.selectbox(f"Item ID {len(order_items)}", item_ids, key = f"item_id_{len(order_items)}")
-            # quantity = st.number_input("Quantity", key=f"quantity_{len(order_items)}")
-            # item = {"item": {"id": item_id}, "quantity": quantity}
-            # test = test + 1
-            # if st.form_submit_button("Enter Item"):
-            #     order_items.append(item)
-            #     st.write(f"Item {len(order_items)} added!")
-            #     add_item_button = False
-
-    if st.button("Submit"):
-        invoice_data = {
-            "invoiceDate": str(invoice_date),
-            "branchLocation": branch_location_to_send,
-            "billingAddress": billing_address_to_send,
-            "vendorName": vendor_name,
-            "orderItems": order_items
-        }
-
-        # st.subheader("JSON Data")
-        # st.json(invoice_data)
-        response = requests.post(URL + "/pi", json=invoice_data)
-        if response.status_code == 200:
-            st.success("Data submitted successfully!")
-        else:
-            get_error_lists(response.text)
-
-def form_si():
-    st.title("Sales Invoice Form")
-
-    branch_locations = fetch_branch_location_ids()
-    bl_ids = list(branch_locations.keys())
-    
-    addresses = fetch_address_ids()
-    address_ids = list(addresses.keys())
-    
-    items = fetch_item_ids()
-    item_ids = list(items.keys())
-
-    invoice_date = st.date_input("Invoice Date", key="invoice_date")
-    customer_name = st.text_input("Customer Name", key="vendor_name")
-    branch_location_id = st.selectbox("Branch Location ID", bl_ids, format_func=lambda x: branch_locations[x], key="branch_location_id")
-    billing_address_id = st.selectbox("Billing Address ID", address_ids, format_func=lambda x: addresses[x], key="billing_address_id")
-    shipping_address_id = st.selectbox("Shipping Address ID", address_ids, format_func=lambda x: addresses[x], key="shipping_address_id")
-    branch_location_to_send = {"id": branch_location_id}
-    billing_address_to_send = {"addrId": billing_address_id}
-    shipping_address_to_send = {"addrId": shipping_address_id}
-
-    item_id = st.selectbox("Item ID", item_ids, format_func=lambda x: items[x], key="item_id")
-    quantity = st.number_input("Quantity", min_value=1, step=1, value=1, key="quantity")
-    order_items = [{"item": {"id": item_id}, "quantity": quantity}]
-
-    if st.button("Submit"):
-        invoice_data = {
-            "invoiceDate": str(invoice_date),
-            "branchLocation": branch_location_to_send,
-            "billingAddress": billing_address_to_send,
-            "shippingAddress": shipping_address_to_send,
-            "customerName": customer_name,
-            "orderItems": order_items
-        }
-
-        # st.subheader("JSON Data")
-        # st.json(invoice_data)
-        response = requests.post(URL + "/si", json=invoice_data)
         if response.status_code == 200:
             st.success("Data submitted successfully!")
         else:
@@ -551,11 +437,12 @@ elif page == "View Buses":
     view_buses()
 elif page == "View Flights":
     view_flights()
-#elif page == "Add Bookings":
-    #form_bookings()
+elif page == "Add Bookings":
+    book_trip()
 # elif page == "Add Travels":
 # elif page == "Add Vehicles":
-# elif page == "Add Customer":
+elif page == "Add Customer":
+    add_customer()
 # elif page == "Add Address":
 # elif page == "Add Hotels":
 # elif page == "Add Buses":

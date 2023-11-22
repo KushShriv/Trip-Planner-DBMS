@@ -53,7 +53,7 @@ def get_all_addresses():
         }
         result.append(address_dict)
 
-    return jsonify({'Addresses': result})
+    return jsonify({'Address': result})
 
 @app.route('/Address/<int:Address_id>', methods=['DELETE'])
 def delete_address(address_id):
@@ -171,7 +171,7 @@ def get_all_cust_phones():
         }
         result.append(phone_dict)
 
-    return jsonify({'customer_phones': result})
+    return jsonify({'cust_phone': result})
 
 @app.route('/cust_phone/<string:phone_number>', methods=['DELETE'])
 def delete_cust_phone(phone_number):
@@ -205,7 +205,7 @@ def get_all_customers():
         }
         result.append(customer_dict)
 
-    return jsonify({'customers': result})
+    return jsonify({'customer': result})
 
 @app.route('/customer/<int:customer_id>', methods=['DELETE'])
 def delete_customer(customer_id):
@@ -289,7 +289,7 @@ def get_all_hotels():
         }
         result.append(hotel_dict)
 
-    return jsonify({'hotels': result})
+    return jsonify({'Hotels': result})
 
 @app.route('/Hotels/<int:hotel_id>', methods=['DELETE'])
 def delete_hotel(hotel_id):
@@ -365,7 +365,7 @@ def get_all_vehicles():
         }
         result.append(vehicle_dict)
 
-    return jsonify({'vehicles': result})
+    return jsonify({'vehicle': result})
 
 @app.route('/vehicle/<int:vehicle_id>', methods=['DELETE'])
 def delete_vehicle(vehicle_id):
