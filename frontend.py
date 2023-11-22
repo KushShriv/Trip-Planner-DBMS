@@ -19,6 +19,7 @@ def get_error_lists(e_map_str):
     for e in e_list:
         st.error(e)
 
+
 def fetch_branch_location_ids():
     url = URL + "/branchLocation"
     response = requests.get(url)
@@ -70,35 +71,81 @@ def fetch_unit_codes():
         return []
 
 # View Functions
-def view_units():
-    st.title("Units")
-    url = URL + "/unit"
+
+def fetch_table_attribute(table, attribute_list = []):
+    url = f"{URL}/{table}"
     response = requests.get(url)
-    data = response.json()
     if response.status_code == 200:
-        st.table(data["units"])
+        data = response.json()
+        result_list = []
+        for item in data[table]:
+            if attribute_list:
+                filtered_item = {key: item.get(key) for key in attribute_list}
+                result_list.append(filtered_item)
+            else:
+                result_list.append(item)
+        return result_list
+    else:
+        return "Error retrieving data"
+
+def directly_display(table, attribute_list = []):
+    st.title(f"{table.capitalize()}s")
+    result = fetch_table_attribute(table, attribute_list)
+    if result == "Error retrieving data":
+        st.error(result)
+    else:
+        df = pd.DataFrame(result)
+        st.table(df)
+    return None
+
+def view_bookings():
+    directly_display("booking")
+
+def view_travels():
+    st.title("Travels")
+    table = "Travel"
+    result = fetch_table_attribute(table)
+    if result == "Error retrieving data":
+        st.error(result)
+    else:
+        df = pd.DataFrame(result)
+        st.table(df)
+
+def view_vehicles():
+    st.title("Vehicles")
+    url = URL + "/vehicle"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        table_data = []
+        for vehicle in data["vehicles"]:
+            table_data.append({
+                "Vehicle ID": vehicle["vehicle_id"],
+                "Arriving date": vehicle["arriving_date"],
+                "Vehicle type": vehicle["vehicle_type"],
+                "Leaving date": vehicle["leaving_date"],
+                "Dest address ID": vehicle["dest_address_id"],
+                "Address ID": vehicle["Address_id"]
+            })
+        df = pd.DataFrame(table_data)
+        st.table(df)
     else:
         st.error("Error retrieving data.")
 
-
-
-def view_items():
-    st.title("Items")
-    url = URL + "/item"
+def view_customer():
+    st.title("Customers")
+    url = URL + "/customer"
     response = requests.get(url)
-
     if response.status_code == 200:
         data = response.json()
-
         table_data = []
-        for item in data["items"]:
+        for customer in data["customers"]:
             table_data.append({
-                "Name": item["name"],
-                "Batch Number": item["batchNumber"],
-                "Unit Code": item["unit"]["unitCode"],
-                "Selling Price": item["sellingPrice"],
-                "Purchase Price": item["purchasePrice"],
-                "Expiry Date": item["expiryDate"]
+                "Customer ID": customer["customer_id"],
+                "Customer name": customer["customer_name"],
+                "Password": customer["password"],
+                "Email": customer["email"]
+
             })
         df = pd.DataFrame(table_data)
         st.table(df)
@@ -106,146 +153,94 @@ def view_items():
         st.error("Error retrieving data.")
 
 def view_address():
-    st.title("Address")
-    url = URL + "/address"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        st.table(data["addresses"])
-
-def view_company():
-    st.title("Company")
-    url = URL + "/company"
+    st.title("Addresses")
+    url = URL + "/Address"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for company in data["companies"]:
+        for Address in data["Addresses"]:
             table_data.append({
-                "Name": company["name"],
-                "Address Line 1": company["headquarterAddress"]["addressLine1"],
-                "Address Line 2": company["headquarterAddress"]["addressLine2"],
-                "City": company["headquarterAddress"]["city"],
-                "State": company["headquarterAddress"]["state"],
-                "Country": company["headquarterAddress"]["country"],
-                "Pincode": company["headquarterAddress"]["pincode"],
-                "GSTIN": company["gstin"]
+                "Address ID": Address["Address_id"],
+                "Location name": Address["location_name"],
+                "Pincode": Address["pincode"],
+                "Country": Address["country"],
+                "House no": Address["house_no"],
+                "Street no": Address["street_no"],
+                "Locality": Address["locality"],
+                "Landmark": Address["landmark"]
             })
         df = pd.DataFrame(table_data)
         st.table(df)
     else:
         st.error("Error retrieving data.")
 
-def view_branchLocation():
-    st.title("Branch Locations")
-    url = URL + "/branchLocation"
+def view_hotels():
+    st.title("Hotels")
+    url = URL + "/Hotels"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-
-        # Extract relevant data for the table
         table_data = []
-        for branch_location in data["branchLocations"]:
+        for hotels in data["hotels"]:
             table_data.append({
-                "Name": branch_location["name"],
-                "Company Name": branch_location["company"]["name"],
-                "Company GSTIN": branch_location["company"]["gstin"],
-                "Branch Address Line 1": branch_location["address"]["addressLine1"],
-                "Branch Address Line 2": branch_location["address"]["addressLine2"],
-                "Branch City": branch_location["address"]["city"],
-                "Branch State": branch_location["address"]["state"],
-                "Branch Country": branch_location["address"]["country"],
-                "Branch Pincode": branch_location["address"]["pincode"]
+                "Hotel ID": hotels["Hotel_id"],
+                "Room ID": hotels["room_id"],
+                "Hotel Name": hotels["hotel_name"],
+                "Check in date": hotels["check_in_date"],
+                "Check out date": hotels["check_out_date"],
+                "Room capacity": hotels["room_capacity"],
+                "Room class": hotels["room_class"],
+                "Cost per night": hotels["cost_per_night"],
+                "Address ID": hotels["Address_id"]
             })
         df = pd.DataFrame(table_data)
         st.table(df)
     else:
         st.error("Error retrieving data.")
 
-def view_pi():
-    st.title("Purchase Invoice")
-    url = URL + "/pi"
-    response = requests.get(url)
-
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        data = response.json()
-
-        # Extract relevant data for the table
-        table_data = []
-        for invoice in data["purchaseInvoices"]:
-            for order_item in invoice["orderItems"]:
-                table_data.append({
-                    # "Invoice ID": invoice["id"],
-                    "Invoice Date": invoice["invoiceDate"],
-                    # "Branch Location ID": invoice["branchLocation"]["id"],
-                    "Branch Location Name": invoice["branchLocation"]["name"],
-                    # "Company ID": invoice["branchLocation"]["company"]["id"],
-                    "Company Name": invoice["branchLocation"]["company"]["name"],
-                    # "Company GSTIN": invoice["branchLocation"]["company"]["gstin"],
-                    "Vendor Name": invoice["vendorName"],
-                    # "Billing Address ID": invoice["billingAddress"]["addrId"],
-                    # "Billing Address Line 1": invoice["billingAddress"]["addressLine1"],
-                    # "Billing Address Line 2": invoice["billingAddress"]["addressLine2"],
-                    # "Billing City": invoice["billingAddress"]["city"],
-                    # "Billing State": invoice["billingAddress"]["state"],
-                    # "Billing Country": invoice["billingAddress"]["country"],
-                    # "Billing Pincode": invoice["billingAddress"]["pincode"],
-                    # "Total GST": invoice["totalGst"],
-                    # "Bill Amount": invoice["billAmount"],
-                    # "Item ID": order_item["item"]["id"],
-                    "Item Name": order_item["item"]["name"],
-                    # "Batch Number": order_item["item"]["batchNumber"],
-                    # "Unit Code": order_item["item"]["unit"]["unitCode"],
-                    # "Selling Price": order_item["item"]["sellingPrice"],
-                    # "Purchase Price": order_item["item"]["purchasePrice"],
-                    # "Expiry Date": order_item["item"]["expiryDate"],
-                    # "Quantity": order_item["quantity"],
-                    "Total Price": order_item["totalPrice"],
-                    "GST Amount": order_item["gstAmount"]
-                })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error(f"Failed to fetch data. Status code: {response.status_code}")
-
-def view_si():
-    st.title("Sales Invoice")
-    url = URL + "/si"
+def view_buses():
+    st.title("Buses")
+    url = URL + "/buses"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for invoice in data["salesInvoices"]:
-            for order_item in invoice["orderItems"]:
-                table_data.append({
-                    "Invoice Date": invoice["invoiceDate"],
-                    "Branch Location Name": invoice["branchLocation"]["name"],
-                    "Company Name": invoice["branchLocation"]["company"]["name"],
-                    "Customer Name": invoice["customerName"],
-                    "Item Name": order_item["item"]["name"],
-                    "Quantity": order_item["quantity"],
-                    "Total Price": order_item["totalPrice"],
-                    "GST Amount": order_item["gstAmount"]
-                })
+        for buses in data["buses"]:
+            table_data.append({
+                "Vehicle number": buses["vehicle_number"],
+                "Description": buses["description"],
+                "Duration mins": buses["duration_mins"],
+                "Seat class": buses["seat_class"],
+                "Travel agency": buses["travel_agency"],
+                "Number seats": buses["number_seats"],
+                "Price per seat": buses["price_per_seat"],
+                "Vehicle ID": buses["vehicle_id"]
+
+            })
         df = pd.DataFrame(table_data)
         st.table(df)
     else:
         st.error("Error retrieving data.")
 
-def view_inventory():
-    st.title("Inventory")
-    url = URL + "/inventory"
+def view_flights():
+    st.title("Flights")
+    url = URL + "/flights"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         table_data = []
-        for inventory in data["inventory"]:
+        for flights in data["flights"]:
             table_data.append({
-                "Branch Location Name": inventory["branchLocation"]["name"],
-                "Item Name": inventory["item"]["name"],
-                "Quantity": inventory["stockQuantity"],
-                "Expiry Date": inventory["expiryDate"]
+                "Flight number": flights["flight_number"],
+                "Price per seat": flights["price_per_seat"],
+                "Number seats": flights["number_seats"],
+                "Airline": flights["airline"],
+                "Description": flights["description"],
+                "Seat class": flights["seat_class"],
+                "Duartion mins": flights["duration_mins"],
+                "Vehicle ID": flights["vehicle_id"]
+
             })
         df = pd.DataFrame(table_data)
         st.table(df)
@@ -496,209 +491,48 @@ def form_si():
         else:
             get_error_lists(response.text)
 
-def view_bookings():
-    st.title("Bookings")
-    url = URL + "/booking"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for booking in data["bookings"]:
-            table_data.append({
-                "Travel ID": booking["travel_id"],
-                "Hotel ID":booking["Hotel_Id"],
-                "Customer ID":booking["customer_id"],
-                "Number of Rooms":booking["No_of_rooms"],
-                "Total Cost":booking["Total_cost"]
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
 
-
-def view_travels():
-    st.title("Travles")
-    url = URL + "/Travel"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for Travel in data["travel_records"]:
-            table_data.append({
-                "Travel ID": Travel["travel_id"],
-                "Vehicle ID to":Travel["vehicle_id_to"],
-                "Vehicle ID from":Travel["vehicle_id_from"],
-                "Vehicle Quantity to":Travel["vehicle_quantity_to"],
-                "Vehicle Quantity from":Travel["vehicle_quantity_from"],
-                "Total Cost":Travel["Total_cost"]
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
-
-
-
-def view_vehicles():
-    st.title("Vehicles")
-    url = URL + "/vehicle"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for vehicle in data["vehicles"]:
-            table_data.append({
-                "Vehicle ID": vehicle["vehicle_id"],
-                "Arriving date":vehicle["arriving_date"],
-                "Vehicle type":vehicle["vehicle_type"],
-                "Leaving date":vehicle["leaving_date"],
-                "Dest address ID":vehicle["dest_address_id"],
-                "Address ID":vehicle["Address_id"]
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
-
-
-def view_customer():
-    st.title("Customers")
-    url = URL + "/customer"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for customer in data["customers"]:
-            table_data.append({
-                "Customer ID": customer["customer_id"],
-                "Customer name":customer["customer_name"],
-                "Password":customer["password"],
-                "Email":customer["email"]
-                
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
-
-def view_address():
-    st.title("Addresses")
-    url = URL + "/Address"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for Address in data["Addresses"]:
-            table_data.append({
-                "Address ID": Address["Address_id"],
-                "Location name":Address["location_name"],
-                "Pincode":Address["pincode"],
-                "Country":Address["country"],
-                "House no":Address["house_no"],
-                "Street no":Address["street_no"],
-                "Locality":Address["locality"],
-                "Landmark":Address["landmark"]
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
-
-
-def view_hotels():
-    st.title("Hotels")
-    url = URL + "/Hotels"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for hotels in data["hotels"]:
-            table_data.append({
-                "Hotel ID": hotels["Hotel_id"],
-                "Room ID":hotels["room_id"],
-                "Hotel Name": hotels["hotel_name"],
-                "Check in date": hotels["check_in_date"],
-                "Check out date": hotels["check_out_date"],
-                "Room capacity": hotels["room_capacity"],
-                "Room class": hotels["room_class"],
-                "Cost per night": hotels["cost_per_night"],
-                "Address ID": hotels["Address_id"]
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
-
-
-def view_buses():
-    st.title("Buses")
-    url = URL + "/buses"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for buses in data["buses"]:
-            table_data.append({
-                "Vehicle number": buses["vehicle_number"],
-                "Description":buses["description"],
-                "Duration mins": buses["duration_mins"],
-                "Seat class": buses["seat_class"],
-                "Travel agency": buses["travel_agency"],
-                "Number seats": buses["number_seats"],
-                "Price per seat": buses["price_per_seat"],
-                "Vehicle ID": buses["vehicle_id"]
-                
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
- 
-def view_flights():
-    st.title("Flights")
-    url = URL + "/flights"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        table_data = []
-        for flights in data["flights"]:
-            table_data.append({
-                "Flight number": flights["flight_number"],
-                "Price per seat":flights["price_per_seat"],
-                "Number seats": flights["number_seats"],
-                "Airline": flights["airline"],
-                "Description": flights["description"],
-                "Seat class": flights["seat_class"],
-                "Duartion mins": flights["duration_mins"],
-                "Vehicle ID": flights["vehicle_id"]
-                
-            })
-        df = pd.DataFrame(table_data)
-        st.table(df)
-    else:
-        st.error("Error retrieving data.")
 # Sidebar menu
-menu = [
-    "View Bookings",
-    "View Travels",
-    "View Vehicles",
-    "View Customer",
-    "View Address",
-    "View Hotels",
-    "View Buses",
-    "View Flights",
-    "Add Bookings",
-    "Add Travels",
-    "Add Vehicles",
-    "Add Customer",
-    "Add Address",
-    "Add Hotels",
-    "Add Buses",
-    "Add Flights",
-
-]
-page = st.sidebar.selectbox("Menu", menu)
+from streamlit_option_menu import option_menu
+with st.sidebar:
+    page = option_menu(menu_title=None, options=[
+        "View Bookings",
+        "View Travels",
+        "View Vehicles",
+        "View Customer",
+        "View Address",
+        "View Hotels",
+        "View Buses",
+        "View Flights",
+        "Add Bookings",
+        "Add Travels",
+        "Add Vehicles",
+        "Add Customer",
+        "Add Address",
+        "Add Hotels",
+        "Add Buses",
+        "Add Flights",
+    ])
+# menu = [
+#     "View Bookings",
+#     "View Travels",
+#     "View Vehicles",
+#     "View Customer",
+#     "View Address",
+#     "View Hotels",
+#     "View Buses",
+#     "View Flights",
+#     "Add Bookings",
+#     "Add Travels",
+#     "Add Vehicles",
+#     "Add Customer",
+#     "Add Address",
+#     "Add Hotels",
+#     "Add Buses",
+#     "Add Flights",
+#
+# ]
+# page = st.sidebar.selectbox("Menu", menu)
 
 # Render page
 if page == "View Bookings":

@@ -1,34 +1,3 @@
-'''
-from flask import Flask
-from flask_sqlalchemy import SQLalchemy
-app = Flask(__name__)
-'''
-
-'''If everything works fine you will get a 
-message that Flask is working on the first
-page of the application
-'''
-
-'''
-@app.route('/')
-def check():
-	return 'Flask is working'
-
-
-if __name__ == '__main__':
-	app.run()
-
-'''
-'''
-# app.py
-from __init__ import create_app
-
-app, _ = create_app()
-
-if __name__ == '__main__':
-    app.run()
-    '''
-
 from flask import Flask, request, jsonify
 import mysql.connector
 
@@ -37,8 +6,10 @@ app = Flask(__name__)
 # MySQL Configuration
 db = mysql.connector.connect(
     host="localhost",
-    user="harshita",
-    password="#Har123har",
+    # user="harshita",
+    # password="#Har123har",
+    user="root",
+    password="21sept",
     database="trip_planner"
 )
 
@@ -92,18 +63,6 @@ def delete_address(address_id):
     db.commit()
     return jsonify({'message': 'Address deleted successfully'}), 200
 
-# ... (previous code)
-
-# Route for 'booking' table
-# @app.route('/booking', methods=['POST'])
-# def add_booking():
-#     data = request.json
-#     query = "INSERT INTO booking (No_of_rooms, Total_cost, Hotel_Id, customer_id, travel_id) VALUES (%s, %s, %s, %s, %s)"
-#     values = (data['No_of_rooms'], data['Total_cost'], data['Hotel_Id'], data['customer_id'], data['travel_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Booking added successfully'}), 201
-
 # Route for 'booking' table
 @app.route('/booking', methods=['POST'])
 def add_booking():
@@ -135,7 +94,7 @@ def get_all_bookings():
         }
         result.append(booking_dict)
 
-    return jsonify({'bookings': result})
+    return jsonify({'booking': result})
 
 @app.route('/booking/<int:booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):
@@ -143,16 +102,6 @@ def delete_booking(booking_id):
     cursor.execute(query, (booking_id,))
     db.commit()
     return jsonify({'message': 'Booking deleted successfully'}), 200
-
-# Route for 'buses' table
-# @app.route('/buses', methods=['POST'])
-# def add_bus():
-#     data = request.json
-#     query = "INSERT INTO buses (vehicle_number, description, duration_mins, seat_class, travel_agency, number_seats, price_per_seat, vehicle_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-#     values = (data['vehicle_number'], data['description'], data['duration_mins'], data['seat_class'], data['travel_agency'], data['number_seats'], data['price_per_seat'], data['vehicle_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Bus added successfully'}), 201
 
 # Route for 'buses' table
 @app.route('/buses', methods=['POST'])
@@ -189,28 +138,12 @@ def get_all_buses():
 
     return jsonify({'buses': result})
 
-
 @app.route('/buses/<int:bus_id>', methods=['DELETE'])
 def delete_bus(bus_id):
     query = "DELETE FROM buses WHERE vehicle_number = %s"
     cursor.execute(query, (bus_id,))
     db.commit()
     return jsonify({'message': 'Bus deleted successfully'}), 200
-
-# ... (similar routes for other tables)
-
-# ... (remaining code)
-# ... (previous code)
-
-# Route for 'cust_phone' table
-# @app.route('/cust_phone', methods=['POST'])
-# def add_cust_phone():
-#     data = request.json
-#     query = "INSERT INTO cust_phone (phno, customer_id) VALUES (%s, %s)"
-#     values = (data['phno'], data['customer_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Customer phone added successfully'}), 201
 
 # Route for 'cust_phone' table
 @app.route('/cust_phone', methods=['POST'])
@@ -282,16 +215,6 @@ def delete_customer(customer_id):
     return jsonify({'message': 'Customer deleted successfully'}), 200
 
 # Route for 'flights' table
-# @app.route('/flights', methods=['POST'])
-# def add_flight():
-#     data = request.json
-#     query = "INSERT INTO flights (flight_number, price_per_seat, number_seats, airline, description, seat_class, duration_mins, vehicle_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-#     values = (data['flight_number'], data['price_per_seat'], data['number_seats'], data['airline'], data['description'], data['seat_class'], data['duration_mins'], data['vehicle_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Flight added successfully'}), 201
-
-# Route for 'flights' table
 @app.route('/flights', methods=['POST'])
 def add_flight():
     data = request.json
@@ -332,17 +255,7 @@ def delete_flight(flight_number):
     db.commit()
     return jsonify({'message': 'Flight deleted successfully'}), 200
 
-# Route for 'hotels' table
-# @app.route('/hotels', methods=['POST'])
-# def add_hotel():
-#     data = request.json
-#     query = "INSERT INTO hotels (Hotel_id, room_id, hotel_name, check_in_date, check_out_date, room_capacity, room_class, cost_per_night, Address_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-#     values = (data['Hotel_id'], data['room_id'], data['hotel_name'], data['check_in_date'], data['check_out_date'], data['room_capacity'], data['room_class'], data['cost_per_night'], data['Address_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Hotel added successfully'}), 201
-
-# Route for 'hotels' table
+# Route for 'Hotels' table
 @app.route('/Hotels', methods=['POST'])
 def add_hotel():
     data = request.json
@@ -399,9 +312,9 @@ def add_travel():
 def get_all_travels():
     query = "SELECT * FROM Travel"
     cursor.execute(query)
-    travel_records = cursor.fetchall()
+    travel = cursor.fetchall()
     result = []
-    for travel_record in travel_records:
+    for travel_record in travel:
         travel_dict = {
             "travel_id": travel_record[0],
             "vehicle_id_to": travel_record[1],
@@ -412,7 +325,7 @@ def get_all_travels():
         }
         result.append(travel_dict)
 
-    return jsonify({'travel_records': result})
+    return jsonify({'Travel': result})
 
 @app.route('/Travel/<int:travel_id>', methods=['DELETE'])
 def delete_travel(travel_id):
@@ -420,16 +333,6 @@ def delete_travel(travel_id):
     cursor.execute(query, (travel_id,))
     db.commit()
     return jsonify({'message': 'Travel deleted successfully'}), 200
-
-# Route for 'vehicle' table
-# @app.route('/vehicle', methods=['POST'])
-# def add_vehicle():
-#     data = request.json
-#     query = "INSERT INTO vehicle (vehicle_id, arriving_date, vehicle_type, leaving_date, start_address_id, dest_address_id, Address_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-#     values = (data['vehicle_id'], data['arriving_date'], data['vehicle_type'], data['leaving_date'], data['start_address_id'], data['dest_address_id'], data['Address_id'])
-#     cursor.execute(query, values)
-#     db.commit()
-#     return jsonify({'message': 'Vehicle added successfully'}), 201
 
 # Route for 'vehicle' table
 @app.route('/vehicle', methods=['POST'])
@@ -471,7 +374,6 @@ def delete_vehicle(vehicle_id):
     db.commit()
     return jsonify({'message': 'Vehicle deleted successfully'}), 200
 
-# ... (remaining code)
 if __name__ == '__main__':
     app.run(debug=True)
 
