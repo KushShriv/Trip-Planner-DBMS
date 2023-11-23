@@ -23,11 +23,11 @@ def check_foreign_keys(value, table_name, column_name):
     if result is None:
         abort(400, description=f"{column_name}={value} not found in {table_name}")
 
-@app.route('/Address', methods=['POST'])
+@app.route('/address', methods=['POST'])
 def add_address():
     data = request.json
     # Insert data into the 'address' table
-    query = "INSERT INTO Address (Address_id, location_name, pincode, country, house_no, street_no, locality, landmark) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO address (Address_id, location_name, pincode, country, house_no, street_no, locality, landmark) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     values = (data['Address_id'], data['location_name'], data['pincode'], data['country'], data['house_no'], data['street_no'], data['locality'], data['landmark'])
     cursor.execute(query, values)
     db.commit()
@@ -103,89 +103,12 @@ def delete_booking(booking_id):
     db.commit()
     return jsonify({'message': 'Booking deleted successfully'}), 200
 
-# Route for 'buses' table
-@app.route('/buses', methods=['POST'])
-def add_bus():
-    data = request.json
-    # Check if the provided vehicle_id exists in the 'vehicle' table
-    check_foreign_keys(data['vehicle_id'], 'vehicle', 'vehicle_id')
-
-    query = "INSERT INTO buses (vehicle_number, description, duration_mins, seat_class, travel_agency, number_seats, price_per_seat, vehicle_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (data['vehicle_number'], data['description'], data['duration_mins'], data['seat_class'], data['travel_agency'], data['number_seats'], data['price_per_seat'], data['vehicle_id'])
-    cursor.execute(query, values)
-    db.commit()
-    return jsonify({'message': 'Bus added successfully'}), 201
-
-@app.route('/buses', methods=['GET'])
-def get_all_buses():
-    query = "SELECT * FROM buses"
-    cursor.execute(query)
-    buses = cursor.fetchall()
-    result = []
-    for bus in buses:
-        bus_dict = {
-            "vehicle_number": bus[0],
-            "description": bus[1],
-            "duration_mins": bus[2],
-            "seat_class": bus[3],
-            "travel_agency": bus[4],
-            "number_seats": bus[5],
-            "price_per_seat": bus[6],
-            "vehicle_id": bus[7]
-            # Add more fields as needed
-        }
-        result.append(bus_dict)
-
-    return jsonify({'buses': result})
-
-@app.route('/buses/<int:bus_id>', methods=['DELETE'])
-def delete_bus(bus_id):
-    query = "DELETE FROM buses WHERE vehicle_number = %s"
-    cursor.execute(query, (bus_id,))
-    db.commit()
-    return jsonify({'message': 'Bus deleted successfully'}), 200
-
-# Route for 'cust_phone' table
-@app.route('/cust_phone', methods=['POST'])
-def add_cust_phone():
-    data = request.json
-    # Check if the provided customer_id exists in the 'customer' table
-    check_foreign_keys(data['customer_id'], 'customer', 'customer_id')
-
-    query = "INSERT INTO cust_phone (phno, customer_id) VALUES (%s, %s)"
-    values = (data['phno'], data['customer_id'])
-    cursor.execute(query, values)
-    db.commit()
-    return jsonify({'message': 'Customer phone added successfully'}), 201
-
-@app.route('/cust_phone', methods=['GET'])
-def get_all_cust_phones():
-    query = "SELECT * FROM cust_phone"
-    cursor.execute(query)
-    cust_phones = cursor.fetchall()
-    result = []
-    for phone_record in cust_phones:
-        phone_dict = {
-            "phno": phone_record[0],
-            "customer_id": phone_record[1]
-        }
-        result.append(phone_dict)
-
-    return jsonify({'cust_phone': result})
-
-@app.route('/cust_phone/<string:phone_number>', methods=['DELETE'])
-def delete_cust_phone(phone_number):
-    query = "DELETE FROM cust_phone WHERE phno = %s"
-    cursor.execute(query, (phone_number,))
-    db.commit()
-    return jsonify({'message': 'Customer phone deleted successfully'}), 200
-
 # Route for 'customer' table
 @app.route('/customer', methods=['POST'])
 def add_customer():
     data = request.json
-    query = "INSERT INTO customer (customer_id, customer_name, password, email) VALUES (%s, %s, %s, %s)"
-    values = (data['customer_id'], data['customer_name'], data['password'], data['email'])
+    query = "INSERT INTO customer (`Customer Name`, `Phone Number`, `Email`, `Password`) VALUES (%s, %s, %s, %s)"
+    values = (data['Customer Name'], data['Phone Number'], data['Email'], data['Password'])
     cursor.execute(query, values)
     db.commit()
     return jsonify({'message': 'Customer added successfully'}), 201
@@ -198,62 +121,22 @@ def get_all_customers():
     result = []
     for customer in customers:
         customer_dict = {
-            "customer_id": customer[0],
-            "customer_name": customer[1],
-            "password": customer[2],
-            "email": customer[3],
+            "Customer ID": customer[0],
+            "Customer Name": customer[1],
+            "Phone Number": customer[2],
+            "Email": customer[3],
+            "Password": customer[4]
         }
         result.append(customer_dict)
 
     return jsonify({'customer': result})
 
-@app.route('/customer/<int:customer_id>', methods=['DELETE'])
+@app.route('/customer/<int:Customer ID>', methods=['DELETE'])
 def delete_customer(customer_id):
-    query = "DELETE FROM customer WHERE customer_id = %s"
+    query = "DELETE FROM customer WHERE `Customer ID` = %s"
     cursor.execute(query, (customer_id,))
     db.commit()
     return jsonify({'message': 'Customer deleted successfully'}), 200
-
-# Route for 'flights' table
-@app.route('/flights', methods=['POST'])
-def add_flight():
-    data = request.json
-    # Check if the provided vehicle_id exists in the 'vehicle' table
-    check_foreign_keys(data['vehicle_id'], 'vehicle', 'vehicle_id')
-
-    query = "INSERT INTO flights (flight_number, price_per_seat, number_seats, airline, description, seat_class, duration_mins, vehicle_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (data['flight_number'], data['price_per_seat'], data['number_seats'], data['airline'], data['description'], data['seat_class'], data['duration_mins'], data['vehicle_id'])
-    cursor.execute(query, values)
-    db.commit()
-    return jsonify({'message': 'Flight added successfully'}), 201
-
-@app.route('/flights', methods=['GET'])
-def get_all_flights():
-    query = "SELECT * FROM flights"
-    cursor.execute(query)
-    flights = cursor.fetchall()
-    result = []
-    for flight in flights:
-        flight_dict = {
-            "flight_number": flight[0],
-            "price_per_seat": flight[1],
-            "number_seats": flight[2],
-            "airline": flight[3],
-            "description": flight[4],
-            "seat_class": flight[5],
-            "duration_mins": flight[6],
-            "vehicle_id": flight[7]
-        }
-        result.append(flight_dict)
-
-    return jsonify({'flights': result})
-
-@app.route('/flights/<int:flight_number>', methods=['DELETE'])
-def delete_flight(flight_number):
-    query = "DELETE FROM flights WHERE flight_number = %s"
-    cursor.execute(query, (flight_number,))
-    db.commit()
-    return jsonify({'message': 'Flight deleted successfully'}), 200
 
 # Route for 'Hotels' table
 @app.route('/Hotels', methods=['POST'])
