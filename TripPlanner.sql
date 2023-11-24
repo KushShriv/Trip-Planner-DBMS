@@ -18,15 +18,15 @@ CREATE TABLE `trip_planner`.`address` (
   PRIMARY KEY (`Address ID`));
 
 CREATE TABLE `trip_planner`.`hotel` (
-  ` Hotel ID` INT NOT NULL AUTO_INCREMENT,
+  `Hotel ID` INT NOT NULL AUTO_INCREMENT,
   `Hotel Name` VARCHAR(45) NULL,
   `Check-in Date` DATE NULL,
   `Check-out Date` DATE NULL,
-  `Room Class` INT NULL,
+  `Room Class` VARCHAR(45) NULL,
   `Room Capacity` INT NULL,
   `Cost Per Night` INT NULL,
   `Address ID` INT NULL,
-  PRIMARY KEY (` Hotel ID`),
+  PRIMARY KEY (`Hotel ID`),
   INDEX `FK Hotel Address_idx` (`Address ID` ASC) VISIBLE,
   CONSTRAINT `FK Hotel Address`
     FOREIGN KEY (`Address ID`)
@@ -95,7 +95,7 @@ CREATE TABLE `trip_planner`.`trip` (
     ON UPDATE NO ACTION,
   CONSTRAINT `FK Trip Hotel`
     FOREIGN KEY (`Hotel ID`)
-    REFERENCES `trip_planner`.`hotel` (` Hotel ID`)
+    REFERENCES `trip_planner`.`hotel` (`Hotel ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `FK Trip Travel`
@@ -103,3 +103,26 @@ CREATE TABLE `trip_planner`.`trip` (
     REFERENCES `trip_planner`.`travel` (`Travel ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+use trip_planner;
+
+DELIMITER //
+CREATE TRIGGER calculate_trip_cost
+BEFORE INSERT ON trip_planner.trip
+FOR EACH ROW
+BEGIN
+    DECLARE travel_cost INT;
+    DECLARE hotel_cost INT;
+
+    SELECT `Total Cost` INTO travel_cost
+    FROM trip_planner.travel
+    WHERE `Travel ID` = NEW.`Travel ID`;
+
+    SELECT DATEDIFF(`Check-out Date`, `Check-in Date`) * `Cost Per Night` INTO hotel_cost
+    FROM trip_planner.hotel
+    WHERE `Hotel ID` = NEW.`Hotel ID`;
+
+    SET NEW.`Total Cost` = travel_cost + hotel_cost;
+END;
+//
+DELIMITER ;
